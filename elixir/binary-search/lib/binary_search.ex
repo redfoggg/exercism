@@ -18,27 +18,27 @@ defmodule BinarySearch do
   """
 
   @spec search(tuple, integer) :: {:ok, integer} | :not_found
-  def search(numbers, key) do
-    index = trunc((tuple_size(numbers) - 1) / 2)
-    search(numbers, key, index, [])
+  def search(numbers, key) when numbers != {} do
+    right_pointer = tuple_size(numbers) - 1
+    left_pointer = 0
+    index = trunc(middle_index(left_pointer, right_pointer))
+    search(numbers, left_pointer, right_pointer, index, key)
   end
+  
+  def search(numbers, _key) when numbers == {}, do: :not_found
 
-  def search(numbers, key, index, mem) do
-    pointer = elem(numbers, index)
-    new_mem = [pointer | mem]
-    IO.puts pointer
+  def search(numbers, left_pointer, right_pointer, index, key) do
+    point = elem(numbers, index)
+
     cond do
-      pointer == key -> {:ok, index}
-      pointer in mem and key != pointer -> :not_found
-      true -> search(numbers, key, new_index(pointer, key, index, tuple_size(numbers), new_mem), new_mem)
+      point == key -> {:ok, index}
+      left_pointer == index or right_pointer == index -> :not_found
+      point < key -> search(numbers, index, right_pointer, round(middle_index(index, right_pointer)), key)
+      point > key -> search(numbers, left_pointer, index, trunc(middle_index(left_pointer, index)), key)
     end
   end
 
-  defp new_index(pointer, key, index, size, mem) do
-    cond do
-      key > pointer and hd(mem) < pointer -> trunc((index + size)/2)
-      key > pointer -> trunc((index + size)/2)
-      key < pointer -> trunc(index / 2)
-    end
+  defp middle_index(left_pointer, right_pointer) do
+    (right_pointer + left_pointer) / 2
   end
 end
