@@ -16,17 +16,18 @@ defmodule SpaceAge do
   @spec age_on(planet, pos_integer) :: {:ok, float} | {:error, String.t()}
   def age_on(planet, seconds) do
     case planet do
-      :mercury -> {:ok, earth_age(seconds) * 0.2408467}
-      :venus -> {:ok, earth_age(seconds) * 0.61519726}
-      :earth -> {:ok, earth_age(seconds)}
-      :mars -> {:ok, earth_age(seconds) * 1.8808158}
-      :jupiter -> {:ok, earth_age(seconds) * 11.862615}
-      :saturn -> {:ok, earth_age(seconds) * 29.447498}
-      :uranus -> {:ok, earth_age(seconds) * 84.016846}
-      :neptune -> {:ok, earth_age(seconds) * 164.79132}
-      true -> {:error, "not a planet"}
+      :mercury -> {:ok, planet_age_by_planet_year(seconds, 0.2408467)}
+      :venus -> {:ok, planet_age_by_planet_year(seconds, 0.61519726)}
+      :earth -> {:ok, planet_age_by_planet_year(seconds)}
+      :mars -> {:ok, planet_age_by_planet_year(seconds, 1.8808158)}
+      :jupiter -> {:ok, planet_age_by_planet_year(seconds, 11.862615)}
+      :saturn -> {:ok, planet_age_by_planet_year(seconds, 29.447498)}
+      :uranus -> {:ok, planet_age_by_planet_year(seconds, 84.016846)}
+      :neptune -> {:ok, planet_age_by_planet_year(seconds, 164.79132)}
+      _ -> {:error, "not a planet"}
     end
   end
 
-  defp earth_age(seconds), do: seconds / 31_557_600
+  defp planet_age_by_planet_year(seconds, planet_year \\ 1),
+    do: Float.round(seconds / (31_557_600 * planet_year), 2)
 end
