@@ -1,45 +1,20 @@
 defmodule Username do
-  @capitalized_letters [
-    ?A,
-    ?B,
-    ?C,
-    ?D,
-    ?E,
-    ?F,
-    ?G,
-    ?H,
-    ?I,
-    ?J,
-    ?K,
-    ?L,
-    ?M,
-    ?N,
-    ?O,
-    ?P,
-    ?Q,
-    ?R,
-    ?S,
-    ?T,
-    ?U,
-    ?V,
-    ?W,
-    ?X,
-    ?Y,
-    ?Z
-  ]
-
-  @german_characters [
-    ?ä,
-    ?ö,
-    ?ü,
-    ?ß
-  ]
-
   def sanitize(username) do
-    # ä becomes ae
-    # ö becomes oe
-    # ü becomes ue
-    # ß becomes ss
-    :todo
+    sanitize(username, [])
+  end
+
+  def sanitize([], acc) do
+    Enum.reverse(acc)
+  end
+
+  def sanitize([head | tail], acc) do
+    case head do
+      head when head == ?ä -> sanitize(tail, [?e | [?a | acc]])
+      head when head == ?ö -> sanitize(tail, [?e | [?o | acc]])
+      head when head == ?ü -> sanitize(tail, [?e | [?u | acc]])
+      head when head == ?ß -> sanitize(tail, [?s | [?s | acc]])
+      head when (head <= ?z and head >= ?a) or head == ?_ -> sanitize(tail, [head | acc])
+      _ -> sanitize(tail, acc)
+    end
   end
 end
