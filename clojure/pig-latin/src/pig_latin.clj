@@ -1,35 +1,41 @@
-(ns pig-latin 
+(ns pig-latin
   (:require
    [clojure.string :as str]))
 
 (defn ^:private rule-1
   [word]
-  "rule-1")
+  (str word "ay"))
 
 (defn ^:private rule-2
   [word]
-  "rule-2")
+  (as-> word w
+    (re-seq #"^[^aeiouAEIOU]+|.+" w)
+    (str (second w) (first w))
+    (rule-1 w)))
 
 (defn ^:private rule-3
   [word]
-  "rule-3")
+  (as-> word w
+    (re-seq #"^[^aeiouAEIOU]*qu|.*" w)
+    (str (second w) (first w))
+    (rule-1 w)))
 
 (defn ^:private rule-4
   [word]
-  "rule-4")
+  (as-> word w
+    (re-seq #"^[^aeiouAEIOUyY]+|y|.*" w)
+    (str (second w) (nth w 2) (first w))
+    (rule-1 w)))
 
-(defn translate [word]
-  (cond 
-    (or (re-find #"^a|e|i|o|u" word)
-        (str/starts-with? "xr" word)
-        (str/starts-with? "yt" word)) (rule-1 word)
-    
-    (= 1 1) (rule-4 word)))
+(defn translate-word [word]
+  (cond
+    (re-find #"^(xr|yt|[aeiouAEIOU]).*" word) (rule-1 word)
+    (re-find #"^[^aeiouAEIOU]*qu" word)       (rule-3 word)
+    (re-find #"^[^aeiouAEIOU]*y"  word)       (rule-4 word)
+    (re-find #"^[^aeiouAEIOU]+" word)         (rule-2 word)))
 
+(defn translate [phrase]
+  (->> (str/split phrase #"\s+")
+       (map translate-word)
+       (str/join " ")))
 
-(translate "apple")
-(translate "earay")
-(pig-latin/translate "igloo")
-(pig-latin/translate "object")
-(pig-latin/translate "under")
-(pig-latin/translate "pig")
