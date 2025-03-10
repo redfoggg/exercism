@@ -17,3 +17,4 @@
         sorted-vec))))
 
 (selection-sort [3 1 4 7 2])
+
